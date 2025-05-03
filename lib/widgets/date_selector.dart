@@ -79,8 +79,8 @@ class _DateSelectorState extends State<DateSelector> {
                   onTap: () {
                     setState(() {
                       selectedDate = date;
+                      widget.dateNotifier.value = date;
                     });
-                    widget.dateNotifier.value = date;
                   },
                   child: Container(
                     width: 70,

@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 
 // Firebase
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -52,10 +51,6 @@ class _MyHomeScreenState extends State<HomeScreen> {
             StreamBuilder(
               stream: FirebaseFirestore.instance
                   .collection("tables")
-                  /*.where('startDate',
-                      isGreaterThanOrEqualTo: selectedDate.value)
-                  .where('startDate',
-                      isLessThan: selectedDate.value.add(const Duration(days:1)))*/
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -78,11 +73,9 @@ class _MyHomeScreenState extends State<HomeScreen> {
                               tableName: snapshot.data!.docs[index].data()['tableName'],
                               length: snapshot.data!.docs[index].data()['length'],
                               width: snapshot.data!.docs[index].data()['width'],
+                              selectedDate: selectedDateNotifier.value,
+                              tableID: snapshot.data!.docs[index].id,
                             ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.all(12.0),
-                            child: ReservationTimes(currentDate: selectedDateNotifier.value)
                           )
                         ],
                       );
