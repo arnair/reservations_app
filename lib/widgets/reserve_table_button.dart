@@ -3,7 +3,12 @@ import 'package:reservations_app/database/add_new_reservation.dart';
 import 'package:flutter/cupertino.dart';
 
 class ReserveButton extends StatelessWidget {
-  const ReserveButton({super.key});
+  final String tableID;
+
+  const ReserveButton({
+    super.key, 
+    required this.tableID
+  });
 
   @override
   Widget build(BuildContext context) {

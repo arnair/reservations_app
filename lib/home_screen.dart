@@ -71,7 +71,7 @@ class _MyHomeScreenState extends State<HomeScreen> {
                               }
                             ),
                           ),
-                          ReserveButton(),
+                          ReserveButton(tableID: snapshot.data!.docs[index].id),
                         ],
                       );
                     },
