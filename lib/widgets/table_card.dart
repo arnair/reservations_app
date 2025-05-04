@@ -36,7 +36,7 @@ class TableCard extends StatelessWidget {
       margin: const EdgeInsets.all(12),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: Colors.grey.shade300, width: 1.5),
+        side: BorderSide(color: Colors.grey.shade800, width: 1.5),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),

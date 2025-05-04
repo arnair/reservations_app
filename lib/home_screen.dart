@@ -1,6 +1,7 @@
 // Widgets
 import 'package:reservations_app/widgets/date_selector.dart';
 import 'package:reservations_app/widgets/table_card.dart';
+import 'package:reservations_app/widgets/reserve_table_button.dart';
 
 // Database
 import 'package:reservations_app/database/add_new_reservation.dart';
@@ -29,19 +30,7 @@ class _MyHomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text('Reservations'),
         actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ReserveTable(),
-                ),
-              );
-            },
-            icon: const Icon(
-              CupertinoIcons.add,
-            ),
-          ),
+          // ReserveButton(),
         ],
       ),
       body: Center(
@@ -72,7 +61,6 @@ class _MyHomeScreenState extends State<HomeScreen> {
                             child: ValueListenableBuilder<DateTime>(
                               valueListenable: selectedDateNotifier,
                               builder: (context, DateTime value, child) {
-                                print(value);
                                 return TableCard(
                                   tableName: snapshot.data!.docs[index].data()['tableName'],
                                   length: snapshot.data!.docs[index].data()['length'],
@@ -82,7 +70,8 @@ class _MyHomeScreenState extends State<HomeScreen> {
                                 );
                               }
                             ),
-                          )
+                          ),
+                          ReserveButton(),
                         ],
                       );
                     },
