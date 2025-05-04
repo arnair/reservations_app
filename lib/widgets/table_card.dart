@@ -73,11 +73,11 @@ class TableCard extends StatelessWidget {
               child: StreamBuilder(
                 stream: FirebaseFirestore.instance
                   .collection("reservations")
-                  // .where('startDate', isGreaterThanOrEqualTo: currentDate.millisecondsSinceEpoch/1000)
-                  // .where('startDate', isLessThan: currentDate.add(const Duration(days:1)).millisecondsSinceEpoch/1000)
-                  .where('tableID', isEqualTo: tableID)
+                  .where('startDate', isGreaterThanOrEqualTo: Timestamp.fromDate(selectedDate))
+                  .where('startDate', isLessThan: Timestamp.fromDate(selectedDate.add(const Duration(days:1))))
+                  // .where('tableID', isEqualTo: tableID)
                   .snapshots(),
-                
+
                 builder:(context, snapshot)  {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
@@ -85,15 +85,21 @@ class TableCard extends StatelessWidget {
                     );
                   }
                   if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                    return Text('Table is free!');
+                    return Text('No reservations');
                   }
               
                   return ListView.builder(
                       shrinkWrap: true,
                       itemCount: snapshot.data!.docs.length,
                       itemBuilder: (context, index) {
-                        // return Row(children:[Text("Test $index")]);
-                        return create_reservation_text(snapshot.data!.docs[index].data()['startDate'], snapshot.data!.docs[index].data()['endDate']);
+                        if (snapshot.data!.docs[index].data()['tableID'] == tableID) {
+                          return create_reservation_text(
+                            snapshot.data!.docs[index].data()['startDate'], 
+                            snapshot.data!.docs[index].data()['endDate']
+                          );
+                        } else {
+                          return const SizedBox(width: 0);
+                        }
                       }
                   );
                 },

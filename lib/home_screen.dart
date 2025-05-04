@@ -24,6 +24,7 @@ class _MyHomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Reservations'),
@@ -68,12 +69,18 @@ class _MyHomeScreenState extends State<HomeScreen> {
                       return Row(
                         children: [
                           Expanded(
-                            child: TableCard(
-                              tableName: snapshot.data!.docs[index].data()['tableName'],
-                              length: snapshot.data!.docs[index].data()['length'],
-                              width: snapshot.data!.docs[index].data()['width'],
-                              selectedDate: selectedDateNotifier.value,
-                              tableID: snapshot.data!.docs[index].id,
+                            child: ValueListenableBuilder<DateTime>(
+                              valueListenable: selectedDateNotifier,
+                              builder: (context, DateTime value, child) {
+                                print(value);
+                                return TableCard(
+                                  tableName: snapshot.data!.docs[index].data()['tableName'],
+                                  length: snapshot.data!.docs[index].data()['length'],
+                                  width: snapshot.data!.docs[index].data()['width'],
+                                  selectedDate: DateTime(selectedDateNotifier.value.year, selectedDateNotifier.value.month,  selectedDateNotifier.value.day),
+                                  tableID: snapshot.data!.docs[index].id,
+                                );
+                              }
                             ),
                           )
                         ],

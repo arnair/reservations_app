@@ -11,14 +11,13 @@ class DateSelector extends StatefulWidget {
 }
 
 class _DateSelectorState extends State<DateSelector> {
-  DateTime selectedDate = DateTime.now();
-  // final ValueNotifier selectedDateNotifier;
   int weekOffset = 0;
 
   _DateSelectorState();
 
   List<DateTime> generateWeekDates(int weekOffset) {
-    final today = DateTime.now();
+    DateTime? now = DateTime.now(); //lets say Jul 25 10:35:90
+    final today = DateTime(now.year, now.month,  now.day); // Set to Jul 25 00:00:00
     DateTime startOfWeek = today.subtract(Duration(days: today.weekday - 1));
     startOfWeek = startOfWeek.add(Duration(days: weekOffset * 7));
     return List.generate(7, (index) => startOfWeek.add(Duration(days: index)));
@@ -70,15 +69,14 @@ class _DateSelectorState extends State<DateSelector> {
               itemCount: weekDates.length,
               itemBuilder: (context, index) {
                 DateTime date = weekDates[index];
-                bool isSelected = DateFormat('d').format(selectedDate) ==
+                bool isSelected = DateFormat('d').format(widget.dateNotifier.value) ==
                         DateFormat('d').format(date) &&
-                    selectedDate.month == date.month &&
-                    selectedDate.year == date.year;
+                    widget.dateNotifier.value.month == date.month &&
+                    widget.dateNotifier.value.year == date.year;
 
                 return GestureDetector(
                   onTap: () {
                     setState(() {
-                      selectedDate = date;
                       widget.dateNotifier.value = date;
                     });
                   },
