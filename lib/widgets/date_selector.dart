@@ -10,14 +10,19 @@ class DateSelector extends StatefulWidget {
   State<DateSelector> createState() => _DateSelectorState();
 }
 
+DateTime getTodayAt0000() {
+  DateTime? now = DateTime.now(); //lets say Jul 25 10:35:90
+  final today = DateTime(now.year, now.month,  now.day); // Set to Jul 25 00:00:00
+  return today;
+}
+
 class _DateSelectorState extends State<DateSelector> {
   int weekOffset = 0;
 
   _DateSelectorState();
 
   List<DateTime> generateWeekDates(int weekOffset) {
-    DateTime? now = DateTime.now(); //lets say Jul 25 10:35:90
-    final today = DateTime(now.year, now.month,  now.day); // Set to Jul 25 00:00:00
+    DateTime today = getTodayAt0000();
     DateTime startOfWeek = today.subtract(Duration(days: today.weekday - 1));
     startOfWeek = startOfWeek.add(Duration(days: weekOffset * 7));
     return List.generate(7, (index) => startOfWeek.add(Duration(days: index)));
@@ -74,12 +79,17 @@ class _DateSelectorState extends State<DateSelector> {
                     widget.dateNotifier.value.month == date.month &&
                     widget.dateNotifier.value.year == date.year;
 
+                bool earlierThanToday = date.isBefore(getTodayAt0000());
+                Color textColor = Colors.black87;
+
+                if (earlierThanToday) {
+                  textColor = Colors.grey.shade300;
+                } else if (isSelected) {
+                  textColor = Colors.white;
+                }
+
                 return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      widget.dateNotifier.value = date;
-                    });
-                  },
+                  onTap: earlierThanToday ? null : () => setState(() {widget.dateNotifier.value = date;}),
                   child: Container(
                     width: 70,
                     margin:
@@ -102,7 +112,7 @@ class _DateSelectorState extends State<DateSelector> {
                         Text(
                           DateFormat('d').format(date), // Day of the month
                           style: TextStyle(
-                            color: isSelected ? Colors.white : Colors.black87,
+                            color: textColor,
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
                           ),
@@ -112,7 +122,7 @@ class _DateSelectorState extends State<DateSelector> {
                           DateFormat('E')
                               .format(date), // Short weekday (Mon, Tue, etc.)
                           style: TextStyle(
-                            color: isSelected ? Colors.white : Colors.black87,
+                            color: textColor,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
