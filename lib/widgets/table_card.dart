@@ -27,84 +27,92 @@ class TableCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 10,
+    final inchesLength = (length / 2.54).toStringAsFixed(0);
+    final inchesWidth = (width / 2.54).toStringAsFixed(0);
+
+    return Card(
+      color: Colors.transparent,
+      elevation: 0,
+      margin: const EdgeInsets.all(12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: Colors.grey.shade300, width: 1.5),
       ),
-      padding: const EdgeInsets.symmetric(vertical: 20.0).copyWith(
-        left: 15,
-      ),
-      decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 245, 199, 146),
-        borderRadius: const BorderRadius.all(
-          Radius.circular(15),
-        ),
-      ),
-      child: Align(
-        alignment: Alignment.centerLeft,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
+              flex: 1,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     tableName,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style:  Theme.of(context).textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.2,
+                            ),
+                    
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 20, bottom: 25),
-                    child: Text(
-                      '${length} x ${width}cm\n${length*2.54} x ${width*2.54}in',
-                      style: const TextStyle(fontSize: 14),
-                      maxLines: 4,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                  const SizedBox(height: 12,),
+                  Text("$length x $width cm\n$inchesLength x $inchesWidth in",),
+                ],
+              ),
+            ),
+            const SizedBox(width: 16,),
+            Expanded(
+              flex: 1,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Reserved slots", 
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1.1,
+                        ),),
+                  const SizedBox(height: 8),
+                  StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                      .collection("reservations")
+                      .where('startDate', isGreaterThanOrEqualTo: Timestamp.fromDate(selectedDate))
+                      .where('startDate', isLessThan: Timestamp.fromDate(selectedDate.add(const Duration(days:1))))
+                      .snapshots(),
+
+                    builder:(context, snapshot)  {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                        return Text('No reserved slots', style: TextStyle(color: Colors.grey[500]));
+                      }
+
+                      final filtered = snapshot.data!.docs
+                          .where((doc) => doc.data()['tableID'] == tableID)
+                          .toList();
+
+                      if (filtered.isEmpty) {
+                        return Text('No reserved slots', style: TextStyle(color: Colors.grey[500]));
+                      }
+                  
+                      return ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: filtered.length,
+                          itemBuilder: (context, index) {
+                            return create_reservation_text(
+                              filtered[index].data()['startDate'], 
+                              filtered[index].data()['endDate']
+                            );
+                          }
+                      );
+                    },
                   ),
                 ],
               ),
             ),
-            Expanded(
-              child: StreamBuilder(
-                stream: FirebaseFirestore.instance
-                  .collection("reservations")
-                  .where('startDate', isGreaterThanOrEqualTo: Timestamp.fromDate(selectedDate))
-                  .where('startDate', isLessThan: Timestamp.fromDate(selectedDate.add(const Duration(days:1))))
-                  // .where('tableID', isEqualTo: tableID)
-                  .snapshots(),
-
-                builder:(context, snapshot)  {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                    return Text('No reservations');
-                  }
-              
-                  return ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: snapshot.data!.docs.length,
-                      itemBuilder: (context, index) {
-                        if (snapshot.data!.docs[index].data()['tableID'] == tableID) {
-                          return create_reservation_text(
-                            snapshot.data!.docs[index].data()['startDate'], 
-                            snapshot.data!.docs[index].data()['endDate']
-                          );
-                        } else {
-                          return const SizedBox(width: 0);
-                        }
-                      }
-                  );
-                },
-              ),
-            )
           ],
         ),
       ),
