@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
-Text create_reservation_text(Timestamp startTime, Timestamp endTime) {
+Text createReservationText(Timestamp startTime, Timestamp endTime) {
 
-  String formatted_start = DateFormat('kk:mm').format(DateTime.fromMillisecondsSinceEpoch(startTime.millisecondsSinceEpoch) );
-  String formatted_end = DateFormat('kk:mm').format(DateTime.fromMillisecondsSinceEpoch(endTime.millisecondsSinceEpoch));
-  return Text('${formatted_start} - ${formatted_end}');
+  String formattedStart = DateFormat('kk:mm').format(DateTime.fromMillisecondsSinceEpoch(startTime.millisecondsSinceEpoch) );
+  String dormattedEnd = DateFormat('kk:mm').format(DateTime.fromMillisecondsSinceEpoch(endTime.millisecondsSinceEpoch));
+  return Text('$formattedStart - $dormattedEnd');
 }
 
 class TableCard extends StatelessWidget {
@@ -102,7 +102,7 @@ class TableCard extends StatelessWidget {
                           shrinkWrap: true,
                           itemCount: filtered.length,
                           itemBuilder: (context, index) {
-                            return create_reservation_text(
+                            return createReservationText(
                               filtered[index].data()['startDate'], 
                               filtered[index].data()['endDate']
                             );

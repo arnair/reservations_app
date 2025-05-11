@@ -85,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final user =
         await _auth.loginUserWithEmailAndPassword(_email.text, _password.text);
 
-    if (user != null) {
+    if (user != null && context.mounted) {
       log("User Logged In");
       goToHome(context);
     }

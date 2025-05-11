@@ -2,12 +2,24 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+import 'dart:developer';
 import 'package:flutter/material.dart';
+
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
+import 'package:toastification/toastification.dart';
+
 class ReserveTable extends StatefulWidget {
-  const ReserveTable({super.key});
+  final String tableId;
+  final DateTime selectedDate;
+
+  const ReserveTable({
+    super.key,
+    required this.tableId, 
+    required this.selectedDate,
+  });
 
   @override
   State<ReserveTable> createState() => _ReserveTableState();
@@ -16,7 +28,6 @@ class ReserveTable extends StatefulWidget {
 class _ReserveTableState extends State<ReserveTable> {
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
-  DateTime selectedDate = DateTime.now();
   File? file;
 
   @override
@@ -33,13 +44,17 @@ class _ReserveTableState extends State<ReserveTable> {
       await FirebaseFirestore.instance.collection("reservations").doc(id).set({
         "title": titleController.text.trim(),
         "description": descriptionController.text.trim(),
-        "date": selectedDate,
         "userID": FirebaseAuth.instance.currentUser!.uid,
         "creationDate": FieldValue.serverTimestamp(),
       });
-      print(id);
-    } catch (e) {
-      print(e);
+
+      log(id);
+
+    } on FirebaseAuthException catch (e) {
+      log(e.message!);
+      toastification.show(title: Text(e.message!),
+        autoCloseDuration: const Duration(seconds: 5),
+      );
     }
   }
 
@@ -60,14 +75,14 @@ class _ReserveTableState extends State<ReserveTable> {
               );
               if (selDate != null) {
                 setState(() {
-                  selectedDate = selDate;
+                  // selectedDate = selDate;
                 });
               }
             },
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                DateFormat('MM-d-y').format(selectedDate),
+                DateFormat('MM-d-y').format(widget.selectedDate),
               ),
             ),
           ),

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:reservations_app/database/add_new_reservation.dart';
-import 'package:flutter/cupertino.dart';
 
 class ReserveButton extends StatelessWidget {
   final String tableID;
+  final DateTime selectedDate;
 
   const ReserveButton({
     super.key, 
-    required this.tableID
+    required this.tableID,
+    required this.selectedDate,
   });
 
   @override
@@ -18,7 +19,7 @@ class ReserveButton extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const ReserveTable(),
+            builder: (context) => ReserveTable(tableId: tableID, selectedDate: selectedDate,),
           ),
         );
       },

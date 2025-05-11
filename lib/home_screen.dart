@@ -3,11 +3,7 @@ import 'package:reservations_app/widgets/date_selector.dart';
 import 'package:reservations_app/widgets/table_card.dart';
 import 'package:reservations_app/widgets/reserve_table_button.dart';
 
-// Database
-import 'package:reservations_app/database/add_new_reservation.dart';
-
 // Flutter
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // Firebase
@@ -55,24 +51,27 @@ class _MyHomeScreenState extends State<HomeScreen> {
                   child: ListView.builder(
                     itemCount: snapshot.data!.docs.length,
                     itemBuilder: (context, index) {
-                      return Row(
-                        children: [
-                          Expanded(
-                            child: ValueListenableBuilder<DateTime>(
-                              valueListenable: selectedDateNotifier,
-                              builder: (context, DateTime value, child) {
-                                return TableCard(
+                      return ValueListenableBuilder<DateTime>(
+                        valueListenable: selectedDateNotifier,
+                        builder: (context, DateTime value, child) {
+                          return Row(
+                            children: [
+                              Expanded(
+                                child: TableCard(
                                   tableName: snapshot.data!.docs[index].data()['tableName'],
                                   length: snapshot.data!.docs[index].data()['length'],
                                   width: snapshot.data!.docs[index].data()['width'],
                                   selectedDate: DateTime(selectedDateNotifier.value.year, selectedDateNotifier.value.month,  selectedDateNotifier.value.day),
                                   tableID: snapshot.data!.docs[index].id,
-                                );
-                              }
-                            ),
-                          ),
-                          ReserveButton(tableID: snapshot.data!.docs[index].id),
-                        ],
+                                ),
+                              ),
+                              ReserveButton(
+                                tableID: snapshot.data!.docs[index].id, 
+                                selectedDate: DateTime(selectedDateNotifier.value.year, selectedDateNotifier.value.month,  selectedDateNotifier.value.day)
+                              ),
+                            ],
+                          );
+                        }
                       );
                     },
                   ),
