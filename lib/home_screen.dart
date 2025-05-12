@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:reservations_app/reservations_screen.dart';
+import 'package:reservations_app/make_reservations_screen.dart';
 
 enum Page {makeReservationsPage, deleteReservationsPage, unknownPage}
 
