@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'dart:ui';
 
 Text createReservationText(Timestamp startTime, Timestamp endTime) {
 
@@ -27,61 +28,78 @@ class ReservationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: Colors.transparent,
-      elevation: 0,
-      margin: const EdgeInsets.all(12),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: Colors.grey.shade800, width: 1.5),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              flex: 1,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-
-                  StreamBuilder(
-                    stream: FirebaseFirestore.instance
-                        .collection("tables")
-                        .doc(tableID)
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                      if (!snapshot.hasData) {
-                        return const Text('No data here :(');
-                      }
-
-                      return Text(
-                        snapshot.data!['tableName'],
-                        style:  Theme.of(context).textTheme.titleLarge?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1.2,
-                                ),
-                        
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 12,),
-                  Text(DateFormat('d-MMM').format(selectedDate),),
-                ],
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          margin: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.grey.shade800, width: 1.5),
+          ),
+          child: Row(
+            children: [
+              const Icon(
+                Icons.table_restaurant,
+                size: 36,
+                color: Colors.grey,
               ),
-            ),
-            const SizedBox(width: 16,),
-            Expanded(
-              flex: 1,
-              child: createReservationText(reservationStart, reservationEnd)
-            ),
-          ],
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection("tables")
+                          .doc(tableID)
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const SizedBox(
+                              height: 18,
+                              width: 18,
+                              child: CircularProgressIndicator(strokeWidth: 2));
+                        }
+                        if (!snapshot.hasData) {
+                          return const Text(
+                            'Unknown Table',
+                            style: TextStyle(color: Colors.redAccent),
+                          );
+                        }
+                        return Text(
+                          snapshot.data!['tableName'],
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 1.1,
+                              ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Icon(Icons.calendar_today,
+                            size: 16,),
+                        const SizedBox(width: 4),
+                        Text(
+                          DateFormat('d MMM').format(selectedDate),
+                        ),
+                        const SizedBox(width: 12),
+                        Icon(Icons.access_time, size: 16,),
+                        const SizedBox(width: 4),
+                        createReservationText(reservationStart, reservationEnd),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
