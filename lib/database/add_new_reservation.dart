@@ -12,17 +12,7 @@ import 'package:uuid/uuid.dart';
 import 'package:toastification/toastification.dart';
 import 'package:time_range_picker/time_range_picker.dart';
 
-class DisabledTimeRange extends TimeRangePicker {
-  DisabledTimeRange({Key? key, required TimeRange disabledTime}) :  super(
-    key: key,
-    strokeColor: Colors.transparent,
-    handlerColor: Colors.transparent,
-    selectedColor: Colors.transparent,
-    backgroundColor: Colors.transparent,
-    hideButtons: true,
-    disabledTime:disabledTime
-  );
-}
+import 'package:reservations_app/widgets/time_ranges.dart';
 
 class ReserveTable extends StatefulWidget {
   final String tableId;
@@ -41,13 +31,20 @@ class ReserveTable extends StatefulWidget {
 class _ReserveTableState extends State<ReserveTable> {
   var reservationStart = TimeOfDay(hour: 2, minute: 0);
   var reservationEnd = TimeOfDay(hour: 3, minute: 0);
+  final MainTimeRange mainPicker = MainTimeRange();
 
   Future<void> uploadReservationToDb() async {
     try {
       final id = const Uuid().v4();
 
-      DateTime startDate = widget.selectedDate.add(Duration(hours: reservationStart.hour, minutes: reservationStart.minute));
-      DateTime endDate = widget.selectedDate.add(Duration(hours: reservationEnd.hour, minutes: reservationEnd.minute));
+      DateTime startDate = widget.selectedDate.add(Duration(
+        hours: mainPicker.reservationStart.hour, 
+        minutes: mainPicker.reservationStart.minute
+      ));
+      DateTime endDate = widget.selectedDate.add(Duration(
+        hours: mainPicker.reservationEnd.hour, 
+        minutes: mainPicker.reservationEnd.minute
+      ));
 
       int startSecondsSinceEpoch = (startDate.millisecondsSinceEpoch/1000).toInt();
       int endSecondsSinceEpoch = (endDate.millisecondsSinceEpoch/1000).toInt();
@@ -101,7 +98,7 @@ class _ReserveTableState extends State<ReserveTable> {
                     );
                   }
 
-                  List<TimeRangePicker> pickerList = [];
+                  List<Widget> pickerList = [];
 
                   if (snapshot.hasData && !snapshot.data!.docs.isEmpty) {
                     final filtered = snapshot.data!.docs
@@ -125,14 +122,7 @@ class _ReserveTableState extends State<ReserveTable> {
                   }
 
                   pickerList.add(
-                    TimeRangePicker(
-                      interval: const Duration(minutes: 15),
-                      hideButtons: true,
-                      // onStartChange: (start) => setState(() {reservationStart = start;}),
-                      // onEndChange: (end) => setState(() {reservationEnd = end;}),
-                      start: TimeOfDay(hour: 2, minute: 0),
-                      end: TimeOfDay(hour: 3, minute: 0),
-                    ),
+                    mainPicker
                   );
 
                   return Stack(
