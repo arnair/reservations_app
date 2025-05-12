@@ -37,6 +37,8 @@ class _MainTimeRangeState extends State<MainTimeRange> {
       ticks: 24,
       ticksOffset: -7,
       ticksLength: 15,
+      minDuration: const Duration(minutes: 60),
+      maxDuration: const Duration(hours: 8),
     );
   }
 }
