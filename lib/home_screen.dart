@@ -1,13 +1,8 @@
-// Widgets
-import 'package:reservations_app/widgets/date_selector.dart';
-import 'package:reservations_app/widgets/table_card.dart';
-import 'package:reservations_app/widgets/reserve_table_button.dart';
-
-// Flutter
 import 'package:flutter/material.dart';
 
-// Firebase
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:reservations_app/reservations_screen.dart';
+
+enum Page {makeReservationsPage, deleteReservationsPage, unknownPage}
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,9 +13,22 @@ class HomeScreen extends StatefulWidget {
 
 class _MyHomeScreenState extends State<HomeScreen> {
   final selectedDateNotifier = ValueNotifier(DateTime.now());
+  var selectedIndex = Page.makeReservationsPage;
 
   @override
   Widget build(BuildContext context) {
+    Widget page;
+
+    switch (selectedIndex) {
+      case Page.makeReservationsPage:
+        page = MakeReservationsScreen();
+        break;
+      case Page.deleteReservationsPage:
+        page = Placeholder();
+        break;
+      default:
+        throw UnimplementedError('no widget for $selectedIndex');
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -29,56 +37,9 @@ class _MyHomeScreenState extends State<HomeScreen> {
           // ReserveButton(),
         ],
       ),
-      body: Center(
-        child: Column(
-          children: [
-            DateSelector(dateNotifier: selectedDateNotifier,),
-            StreamBuilder(
-              stream: FirebaseFirestore.instance
-                  .collection("tables")
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-                if (!snapshot.hasData) {
-                  return const Text('No data here :(');
-                }
-
-                return Expanded(
-                  child: ListView.builder(
-                    itemCount: snapshot.data!.docs.length,
-                    itemBuilder: (context, index) {
-                      return ValueListenableBuilder<DateTime>(
-                        valueListenable: selectedDateNotifier,
-                        builder: (context, DateTime value, child) {
-                          return Row(
-                            children: [
-                              Expanded(
-                                child: TableCard(
-                                  tableName: snapshot.data!.docs[index].data()['tableName'],
-                                  length: snapshot.data!.docs[index].data()['length'],
-                                  width: snapshot.data!.docs[index].data()['width'],
-                                  selectedDate: DateTime(selectedDateNotifier.value.year, selectedDateNotifier.value.month,  selectedDateNotifier.value.day),
-                                  tableID: snapshot.data!.docs[index].id,
-                                ),
-                              ),
-                              ReserveButton(
-                                tableID: snapshot.data!.docs[index].id, 
-                                selectedDate: DateTime(selectedDateNotifier.value.year, selectedDateNotifier.value.month,  selectedDateNotifier.value.day)
-                              ),
-                            ],
-                          );
-                        }
-                      );
-                    },
-                  ),
-                );
-              },
-            ),
-          ],
+      body: Expanded(
+        child: Container(
+          child: page,
         ),
       ),
     );
