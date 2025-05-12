@@ -2,20 +2,25 @@ import 'package:flutter/material.dart';
 
 // Firebase
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 // Widgets
 import 'package:reservations_app/widgets/date_selector.dart';
 import 'package:reservations_app/widgets/table_card.dart';
 import 'package:reservations_app/widgets/reserve_table_buttons.dart';
 
-class MakeReservationsScreen extends StatefulWidget {
-  const MakeReservationsScreen({super.key});
+// app
+import 'package:reservations_app/widgets/reservation_card.dart';
+import 'package:time_range_picker/time_range_picker.dart';
+
+class DeleteReservationsScreen extends StatefulWidget {
+  const DeleteReservationsScreen({super.key});
 
   @override
-  State<MakeReservationsScreen> createState() => _MakeReservationsScreenState();
+  State<DeleteReservationsScreen> createState() => _DeleteReservationsScreenState();
 }
 
-class _MakeReservationsScreenState extends State<MakeReservationsScreen> {
+class _DeleteReservationsScreenState extends State<DeleteReservationsScreen> {
   final selectedDateNotifier = ValueNotifier(DateTime.now());
 
     @override
@@ -23,10 +28,10 @@ class _MakeReservationsScreenState extends State<MakeReservationsScreen> {
     return Center(
       child: Column(
         children: [
-          DateSelector(dateNotifier: selectedDateNotifier,),
           StreamBuilder(
             stream: FirebaseFirestore.instance
-                .collection("tables")
+                .collection("reservations")
+                .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
                 .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -45,22 +50,18 @@ class _MakeReservationsScreenState extends State<MakeReservationsScreen> {
                     return ValueListenableBuilder<DateTime>(
                       valueListenable: selectedDateNotifier,
                       builder: (context, DateTime value, child) {
-                        return Row(
-                          children: [
-                            Expanded(
-                              child: TableCard(
-                                tableName: snapshot.data!.docs[index].data()['tableName'],
-                                length: snapshot.data!.docs[index].data()['length'],
-                                width: snapshot.data!.docs[index].data()['width'],
-                                selectedDate: DateTime(selectedDateNotifier.value.year, selectedDateNotifier.value.month,  selectedDateNotifier.value.day),
-                                tableID: snapshot.data!.docs[index].id,
-                              ),
-                            ),
-                            ReserveButton(
-                              tableID: snapshot.data!.docs[index].id, 
-                              selectedDate: DateTime(selectedDateNotifier.value.year, selectedDateNotifier.value.month,  selectedDateNotifier.value.day)
-                            ),
-                          ],
+                        String tableName = 'Test';
+
+                        Timestamp startTime = snapshot.data!.docs[index].data()['startDate'];
+                        Timestamp endtTime = snapshot.data!.docs[index].data()['endDate'];
+                        DateTime selectedDate = DateTime.fromMillisecondsSinceEpoch(startTime.millisecondsSinceEpoch);
+
+                        return ReservationCard(
+                          tableID: snapshot.data!.docs[index].data()['tableID'],
+                          selectedDate: selectedDate,
+                          reservationStart: startTime,
+                          reservationEnd: endtTime,
+                          tableName: tableName,
                         );
                       }
                     );

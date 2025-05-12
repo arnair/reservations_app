@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:reservations_app/delete_reservations_screen.dart';
 
 import 'package:reservations_app/make_reservations_screen.dart';
+import 'package:reservations_app/widgets/reserve_table_buttons.dart';
 
 enum Page {makeReservationsPage, deleteReservationsPage, unknownPage}
 
@@ -24,7 +26,7 @@ class _MyHomeScreenState extends State<HomeScreen> {
         page = MakeReservationsScreen();
         break;
       case Page.deleteReservationsPage:
-        page = Placeholder();
+        page = DeleteReservationsScreen();
         break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
@@ -34,7 +36,16 @@ class _MyHomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text('Reservations'),
         actions: [
-          // ReserveButton(),
+          CustomIconButton(
+            icon: IconData(0xe403, 
+            fontFamily: 'MaterialIcons'),
+            onPressed:() => setState(() {selectedIndex = Page.makeReservationsPage;}),
+          ),
+          CustomIconButton(
+            icon: IconData(0xeeaa, 
+            fontFamily: 'MaterialIcons'),
+            onPressed:() => setState(() {selectedIndex = Page.deleteReservationsPage;}),
+          ),
         ],
       ),
       body: Expanded(
