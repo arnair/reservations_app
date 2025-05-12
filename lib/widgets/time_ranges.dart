@@ -18,6 +18,13 @@ class _MainTimeRangeState extends State<MainTimeRange> {
 
   @override
   Widget build(BuildContext context) {
+    
+    List<ClockLabel> labels = [];
+    int offset = 90;
+    for (int index = 0; index < 12; index++) {
+      labels.add(ClockLabel.fromDegree(deg: (index * 30 + offset).toDouble(), text: '${index * 2}'));
+    }
+    
     return TimeRangePicker(
       interval: const Duration(minutes: 15),
       hideButtons: true,
@@ -25,6 +32,11 @@ class _MainTimeRangeState extends State<MainTimeRange> {
       onEndChange: (end) => setState(() {widget.reservationEnd = end;}),
       start: widget.reservationStart,
       end: widget.reservationEnd,
+      labels: labels,
+      labelOffset: -20,
+      ticks: 24,
+      ticksOffset: -7,
+      ticksLength: 15,
     );
   }
 }
