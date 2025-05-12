@@ -17,6 +17,7 @@ class AuthService {
       log(e.message!);
       toastification.show(title: Text(e.message!),
         autoCloseDuration: const Duration(seconds: 5),
+        type: ToastificationType.error
       );
     }
     return null;
@@ -32,6 +33,7 @@ class AuthService {
       log(e.message!);
       toastification.show(title: Text(e.message!),
         autoCloseDuration: const Duration(seconds: 5),
+        type: ToastificationType.error
       );
     }
     return null;
@@ -44,6 +46,7 @@ class AuthService {
       log(e.message!);
       toastification.show(title: Text(e.message!),
         autoCloseDuration: const Duration(seconds: 5),
+        type: ToastificationType.error
       );
     }
   }
