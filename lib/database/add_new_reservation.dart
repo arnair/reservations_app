@@ -10,6 +10,19 @@ import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:toastification/toastification.dart';
+import 'package:time_range_picker/time_range_picker.dart';
+
+class DisabledTimeRange extends TimeRangePicker {
+  DisabledTimeRange({Key? key, required TimeRange disabledTime}) :  super(
+    key: key,
+    strokeColor: Colors.transparent,
+    handlerColor: Colors.transparent,
+    selectedColor: Colors.transparent,
+    backgroundColor: Colors.transparent,
+    hideButtons: true,
+    disabledTime:disabledTime
+  );
+}
 
 class ReserveTable extends StatefulWidget {
   final String tableId;
@@ -26,26 +39,30 @@ class ReserveTable extends StatefulWidget {
 }
 
 class _ReserveTableState extends State<ReserveTable> {
-  final titleController = TextEditingController();
-  final descriptionController = TextEditingController();
-  File? file;
-
-  @override
-  void dispose() {
-    titleController.dispose();
-    descriptionController.dispose();
-    super.dispose();
-  }
+  var reservationStart = TimeOfDay(hour: 2, minute: 0);
+  var reservationEnd = TimeOfDay(hour: 3, minute: 0);
 
   Future<void> uploadReservationToDb() async {
     try {
       final id = const Uuid().v4();
 
+      DateTime startDate = widget.selectedDate.add(Duration(hours: reservationStart.hour, minutes: reservationStart.minute));
+      DateTime endDate = widget.selectedDate.add(Duration(hours: reservationEnd.hour, minutes: reservationEnd.minute));
+
+      int startSecondsSinceEpoch = (startDate.millisecondsSinceEpoch/1000).toInt();
+      int endSecondsSinceEpoch = (endDate.millisecondsSinceEpoch/1000).toInt();
+
+      Timestamp start = Timestamp(startSecondsSinceEpoch, 0);
+      Timestamp end = Timestamp(endSecondsSinceEpoch, 0);
+
+      print('Reserving from ${start} to ${end}');
+
       await FirebaseFirestore.instance.collection("reservations").doc(id).set({
-        "title": titleController.text.trim(),
-        "description": descriptionController.text.trim(),
         "userID": FirebaseAuth.instance.currentUser!.uid,
         "creationDate": FieldValue.serverTimestamp(),
+        "tableID": widget.tableId,
+        "startDate": start,
+        "endDate": end
       });
 
       log(id);
@@ -62,31 +79,7 @@ class _ReserveTableState extends State<ReserveTable> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Reserve table'),
-        actions: [
-          GestureDetector(
-            onTap: () async {
-              final selDate = await showDatePicker(
-                context: context,
-                firstDate: DateTime.now(),
-                lastDate: DateTime.now().add(
-                  const Duration(days: 90),
-                ),
-              );
-              if (selDate != null) {
-                setState(() {
-                  // selectedDate = selDate;
-                });
-              }
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                DateFormat('MM-d-y').format(widget.selectedDate),
-              ),
-            ),
-          ),
-        ],
+        title: Text(DateFormat('d-MMM').format(widget.selectedDate)),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -94,30 +87,71 @@ class _ReserveTableState extends State<ReserveTable> {
           child: Column(
             children: [              
               const SizedBox(height: 10),
-              TextFormField(
-                controller: titleController,
-                decoration: const InputDecoration(
-                  hintText: 'Title',
-                ),
-              ),
-              const SizedBox(height: 10),
-              TextFormField(
-                controller: descriptionController,
-                decoration: const InputDecoration(
-                  hintText: 'Description',
-                ),
-                maxLines: 3,
-              ),
+
+              StreamBuilder(
+                stream: FirebaseFirestore.instance
+                      .collection("reservations")
+                      .where('startDate', isGreaterThanOrEqualTo: Timestamp.fromDate(widget.selectedDate))
+                      .where('startDate', isLessThan: Timestamp.fromDate(widget.selectedDate.add(const Duration(days:1))))
+                      .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+
+                  List<TimeRangePicker> pickerList = [];
+
+                  if (snapshot.hasData && !snapshot.data!.docs.isEmpty) {
+                    final filtered = snapshot.data!.docs
+                      .where((doc) => doc.data()['tableID'] == widget.tableId)
+                      .toList();
+                    
+                    filtered.forEach((data) {
+                      pickerList.add(
+                        DisabledTimeRange(
+                          disabledTime: TimeRange(
+                              startTime: TimeOfDay.fromDateTime(
+                                DateTime.fromMillisecondsSinceEpoch(data['startDate'].millisecondsSinceEpoch)
+                              ),
+                              endTime: TimeOfDay.fromDateTime(
+                                DateTime.fromMillisecondsSinceEpoch(data['endDate'].millisecondsSinceEpoch)
+                              ),
+                            )
+                        )
+                      );
+                    });
+                  }
+
+                  pickerList.add(
+                    TimeRangePicker(
+                      interval: const Duration(minutes: 15),
+                      hideButtons: true,
+                      // onStartChange: (start) => setState(() {reservationStart = start;}),
+                      // onEndChange: (end) => setState(() {reservationEnd = end;}),
+                      start: TimeOfDay(hour: 2, minute: 0),
+                      end: TimeOfDay(hour: 3, minute: 0),
+                    ),
+                  );
+
+                  return Stack(
+                    alignment: AlignmentDirectional.topStart,
+                    children: pickerList,
+                  );
+                }
+              ),              
+
               const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () async {
                   await uploadReservationToDb();
                 },
-                child: const Text(
+                child: Text(
                   'SUBMIT',
                   style: TextStyle(
                     fontSize: 16,
-                    color: Colors.white,
+                    color: Colors.grey.shade800,
                   ),
                 ),
               ),
