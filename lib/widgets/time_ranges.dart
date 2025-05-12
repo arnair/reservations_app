@@ -44,8 +44,7 @@ class _MainTimeRangeState extends State<MainTimeRange> {
 }
 
 class DisabledTimeRange extends TimeRangePicker {
-  DisabledTimeRange({Key? key, required TimeRange disabledTime}) :  super(
-    key: key,
+  DisabledTimeRange({super.key, required TimeRange disabledTime}) :  super(
     strokeColor: Colors.transparent,
     handlerColor: Colors.transparent,
     selectedColor: Colors.transparent,

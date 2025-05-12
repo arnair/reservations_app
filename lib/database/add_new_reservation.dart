@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -178,12 +176,12 @@ class _ReserveTableState extends State<ReserveTable> {
                   List<Widget> pickerList = [];
                   reservedSlots.clear();
 
-                  if (snapshot.hasData && !snapshot.data!.docs.isEmpty) {
+                  if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
                     final filtered = snapshot.data!.docs
                       .where((doc) => doc.data()['tableID'] == widget.tableId)
                       .toList();
                     
-                    filtered.forEach((data) {
+                    for (var data in filtered) {
                       DateTime start = DateTime.fromMillisecondsSinceEpoch(data['startDate'].millisecondsSinceEpoch);
                       DateTime end  = DateTime.fromMillisecondsSinceEpoch(data['endDate'].millisecondsSinceEpoch);
 
@@ -200,7 +198,7 @@ class _ReserveTableState extends State<ReserveTable> {
                           )
                         )
                       );
-                    });
+                    }
                   }
 
                   pickerList.add(
