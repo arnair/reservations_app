@@ -16,6 +16,7 @@ class HomeScreen extends StatefulWidget {
 class _MyHomeScreenState extends State<HomeScreen> {
   final selectedDateNotifier = ValueNotifier(DateTime.now());
   var selectedIndex = Page.makeReservationsPage;
+  var pageTitle;
 
   @override
   Widget build(BuildContext context) {
@@ -24,9 +25,11 @@ class _MyHomeScreenState extends State<HomeScreen> {
     switch (selectedIndex) {
       case Page.makeReservationsPage:
         page = MakeReservationsScreen();
+        pageTitle = 'New reservation';
         break;
       case Page.deleteReservationsPage:
         page = DeleteReservationsScreen();
+        pageTitle = 'My reservations';
         break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
@@ -34,12 +37,15 @@ class _MyHomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Reservations'),
+        title: Text(pageTitle),
         actions: [
           CustomIconButton(
             icon: IconData(0xe403, 
             fontFamily: 'MaterialIcons'),
-            onPressed:() => setState(() {selectedIndex = Page.makeReservationsPage;}),
+            onPressed:() => setState(() {
+              selectedIndex = Page.makeReservationsPage;
+
+            }),
           ),
           CustomIconButton(
             icon: IconData(0xeeaa, 
