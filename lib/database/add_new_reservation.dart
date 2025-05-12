@@ -217,7 +217,17 @@ class _ReserveTableState extends State<ReserveTable> {
               const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () async {
-                  await uploadReservationToDb();
+                  bool success = await uploadReservationToDb();
+
+                  if (success) {
+                    toastification.show(
+                      title: Text("Time slot successfuly reserved!"),
+                      autoCloseDuration: const Duration(seconds: 10),
+                    );
+
+                    // If reservation is successful, go back
+                    Navigator.of(context).pop();
+                  }
                 },
                 child: Text(
                   'SUBMIT',
