@@ -23,7 +23,7 @@ class HomeScreen extends StatefulWidget {
 
 class _MyHomeScreenState extends State<HomeScreen> {
   final selectedDateNotifier = ValueNotifier(DateTime.now());
-  var selectedIndex = Page.deleteReservationsPage;
+  var selectedIndex = Page.makeReservationsPage;
   var pageTitle = 'ERROR';
 
   @override
@@ -64,10 +64,8 @@ class _MyHomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: Flexible(
-        child: Container(
-          child: page,
-        ),
+      body:Container(
+        child: page,
       ),
     );
   }

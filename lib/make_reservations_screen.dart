@@ -38,34 +38,34 @@ class _MakeReservationsScreenState extends State<MakeReservationsScreen> {
                 return const Text('No data here :(');
               }
 
-              return Flexible(
-                child: ListView.builder(
-                  itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (context, index) {
-                    return ValueListenableBuilder<DateTime>(
-                      valueListenable: selectedDateNotifier,
-                      builder: (context, DateTime value, child) {
-                        return Row(
-                          children: [
-                            Flexible(
-                              child: TableCard(
-                                tableName: snapshot.data!.docs[index].data()['tableName'],
-                                length: snapshot.data!.docs[index].data()['length'],
-                                width: snapshot.data!.docs[index].data()['width'],
-                                selectedDate: DateTime(selectedDateNotifier.value.year, selectedDateNotifier.value.month,  selectedDateNotifier.value.day),
-                                tableID: snapshot.data!.docs[index].id,
-                              ),
+              return ListView.builder(
+                shrinkWrap: true,
+                itemCount: snapshot.data!.docs.length,
+                itemBuilder: (context, index) {
+                  return ValueListenableBuilder<DateTime>(
+                    valueListenable: selectedDateNotifier,
+                    builder: (context, DateTime value, child) {
+                      return Row(
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: TableCard(
+                              tableName: snapshot.data!.docs[index].data()['tableName'],
+                              length: snapshot.data!.docs[index].data()['length'],
+                              width: snapshot.data!.docs[index].data()['width'],
+                              selectedDate: DateTime(selectedDateNotifier.value.year, selectedDateNotifier.value.month,  selectedDateNotifier.value.day),
+                              tableID: snapshot.data!.docs[index].id,
                             ),
-                            ReserveButton(
-                              tableID: snapshot.data!.docs[index].id, 
-                              selectedDate: DateTime(selectedDateNotifier.value.year, selectedDateNotifier.value.month,  selectedDateNotifier.value.day)
-                            ),
-                          ],
-                        );
-                      }
-                    );
-                  },
-                ),
+                          ),
+                          ReserveButton(
+                            tableID: snapshot.data!.docs[index].id, 
+                            selectedDate: DateTime(selectedDateNotifier.value.year, selectedDateNotifier.value.month,  selectedDateNotifier.value.day)
+                          ),
+                        ],
+                      );
+                    }
+                  );
+                },
               );
             },
           ),

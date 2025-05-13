@@ -43,54 +43,54 @@ class _DeleteReservationsScreenState extends State<DeleteReservationsScreen> {
                 return const Text('No data here :(');
               }
 
-              return Flexible(
-                child: ListView.builder(
-                  itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (context, index) {
-                    String tableName = 'Test';
+              return ListView.builder(
+                shrinkWrap: true,
+                itemCount: snapshot.data!.docs.length,
+                itemBuilder: (context, index) {
+                  String tableName = 'Test';
 
-                    Timestamp startTime = snapshot.data!.docs[index].data()['startDate'];
-                    Timestamp endtTime = snapshot.data!.docs[index].data()['endDate'];
-                    DateTime selectedDate = DateTime.fromMillisecondsSinceEpoch(startTime.millisecondsSinceEpoch);
+                  Timestamp startTime = snapshot.data!.docs[index].data()['startDate'];
+                  Timestamp endtTime = snapshot.data!.docs[index].data()['endDate'];
+                  DateTime selectedDate = DateTime.fromMillisecondsSinceEpoch(startTime.millisecondsSinceEpoch);
 
-                    return Row(
-                      children: [
-                        Flexible(
-                          child: ReservationCard(
-                            tableID: snapshot.data!.docs[index].data()['tableID'],
-                            selectedDate: selectedDate,
-                            reservationStart: startTime,
-                            reservationEnd: endtTime,
-                            tableName: tableName,
-                          ),
+                  return Row(
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: ReservationCard(
+                          tableID: snapshot.data!.docs[index].data()['tableID'],
+                          selectedDate: selectedDate,
+                          reservationStart: startTime,
+                          reservationEnd: endtTime,
+                          tableName: tableName,
                         ),
-                        CustomIconButton(
-                          icon: const IconData(0xeeaa, fontFamily: 'MaterialIcons'),
-                          onPressed: () {
-                            try {
-                              FirebaseFirestore.instance
-                              .collection("reservations")
-                              .doc(snapshot.data!.docs[index].id)
-                              .delete()
-                              .then((_) {
-                                log("Reservation deleted");
-                                toastification.show(title: Text("Reservation deleted"),
-                                  autoCloseDuration: const Duration(seconds: 5),
-                                );
-                              });
-                            } on FirebaseException catch (e) {
-                              log(e.message!);
-                              toastification.show(title: Text(e.message!),
+                      ),
+                      CustomIconButton(
+                        icon: const IconData(0xeeaa, fontFamily: 'MaterialIcons'),
+                        onPressed: () {
+                          try {
+                            FirebaseFirestore.instance
+                            .collection("reservations")
+                            .doc(snapshot.data!.docs[index].id)
+                            .delete()
+                            .then((_) {
+                              log("Reservation deleted");
+                              toastification.show(title: Text("Reservation deleted"),
                                 autoCloseDuration: const Duration(seconds: 5),
-                                type: ToastificationType.error
                               );
-                            }
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                ),
+                            });
+                          } on FirebaseException catch (e) {
+                            log(e.message!);
+                            toastification.show(title: Text(e.message!),
+                              autoCloseDuration: const Duration(seconds: 5),
+                              type: ToastificationType.error
+                            );
+                          }
+                        },
+                      ),
+                    ],
+                  );
+                },
               );
             },
           ),

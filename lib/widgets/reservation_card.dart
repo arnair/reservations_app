@@ -44,55 +44,53 @@ class ReservationCard extends StatelessWidget {
             color: Colors.grey,
           ),
           const SizedBox(width: 16),
-          Flexible(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                StreamBuilder(
-                  stream: FirebaseFirestore.instance
-                      .collection("tables")
-                      .doc(tableID)
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState ==
-                        ConnectionState.waiting) {
-                      return const SizedBox(
-                          height: 18,
-                          width: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2));
-                    }
-                    if (!snapshot.hasData) {
-                      return const Text(
-                        'Unknown Table',
-                        style: TextStyle(color: Colors.redAccent),
-                      );
-                    }
-                    return Text(
-                      snapshot.data!['tableName'],
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 1.1,
-                          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              StreamBuilder(
+                stream: FirebaseFirestore.instance
+                    .collection("tables")
+                    .doc(tableID)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return const SizedBox(
+                        height: 18,
+                        width: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2));
+                  }
+                  if (!snapshot.hasData) {
+                    return const Text(
+                      'Unknown Table',
+                      style: TextStyle(color: Colors.redAccent),
                     );
-                  },
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Icon(Icons.calendar_today,
-                        size: 16,),
-                    const SizedBox(width: 4),
-                    Text(
-                      DateFormat('d MMM').format(selectedDate),
-                    ),
-                    const SizedBox(width: 12),
-                    Icon(Icons.access_time, size: 16,),
-                    const SizedBox(width: 4),
-                    createReservationText(reservationStart, reservationEnd),
-                  ],
-                )
-              ],
-            ),
+                  }
+                  return Text(
+                    snapshot.data!['tableName'],
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1.1,
+                        ),
+                  );
+                },
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Icon(Icons.calendar_today,
+                      size: 16,),
+                  const SizedBox(width: 4),
+                  Text(
+                    DateFormat('d MMM').format(selectedDate),
+                  ),
+                  const SizedBox(width: 12),
+                  Icon(Icons.access_time, size: 16,),
+                  const SizedBox(width: 4),
+                  createReservationText(reservationStart, reservationEnd),
+                ],
+              )
+            ],
           ),
         ],
       ),
