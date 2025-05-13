@@ -38,7 +38,7 @@ class _MakeReservationsScreenState extends State<MakeReservationsScreen> {
                 return const Text('No data here :(');
               }
 
-              return Expanded(
+              return Flexible(
                 child: ListView.builder(
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (context, index) {
@@ -47,7 +47,7 @@ class _MakeReservationsScreenState extends State<MakeReservationsScreen> {
                       builder: (context, DateTime value, child) {
                         return Row(
                           children: [
-                            Expanded(
+                            Flexible(
                               child: TableCard(
                                 tableName: snapshot.data!.docs[index].data()['tableName'],
                                 length: snapshot.data!.docs[index].data()['length'],

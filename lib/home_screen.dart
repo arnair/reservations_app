@@ -23,8 +23,8 @@ class HomeScreen extends StatefulWidget {
 
 class _MyHomeScreenState extends State<HomeScreen> {
   final selectedDateNotifier = ValueNotifier(DateTime.now());
-  var selectedIndex = Page.makeReservationsPage;
-  var pageTitle;
+  var selectedIndex = Page.deleteReservationsPage;
+  var pageTitle = 'ERROR';
 
   @override
   Widget build(BuildContext context) {
@@ -48,24 +48,23 @@ class _MyHomeScreenState extends State<HomeScreen> {
         title: Text(pageTitle),
         actions: [
           CustomIconButton(
-            icon: IconData(0xe403, 
+            icon: const IconData(0xe403, 
             fontFamily: 'MaterialIcons'),
             onPressed:() => setState(() {selectedIndex = Page.makeReservationsPage;}),
           ),
           CustomIconButton(
-            icon: IconData(0xeeaa, 
+            icon: const IconData(0xeeaa, 
             fontFamily: 'MaterialIcons'),
             onPressed:() => setState(() {selectedIndex = Page.deleteReservationsPage;}),
           ),
           CustomIconButton(
-            icon: IconData(0xf199, 
+            icon: const IconData(0xf199, 
             fontFamily: 'MaterialIcons'),
-            onPressed: signOutUser,
-           
+            onPressed: () => {signOutUser(context)},
           ),
         ],
       ),
-      body: Expanded(
+      body: Flexible(
         child: Container(
           child: page,
         ),

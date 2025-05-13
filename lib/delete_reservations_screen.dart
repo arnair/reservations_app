@@ -43,7 +43,7 @@ class _DeleteReservationsScreenState extends State<DeleteReservationsScreen> {
                 return const Text('No data here :(');
               }
 
-              return Expanded(
+              return Flexible(
                 child: ListView.builder(
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (context, index) {
@@ -55,7 +55,7 @@ class _DeleteReservationsScreenState extends State<DeleteReservationsScreen> {
 
                     return Row(
                       children: [
-                        Expanded(
+                        Flexible(
                           child: ReservationCard(
                             tableID: snapshot.data!.docs[index].data()['tableID'],
                             selectedDate: selectedDate,
@@ -65,7 +65,7 @@ class _DeleteReservationsScreenState extends State<DeleteReservationsScreen> {
                           ),
                         ),
                         CustomIconButton(
-                          icon: IconData(0xeeaa, fontFamily: 'MaterialIcons'),
+                          icon: const IconData(0xeeaa, fontFamily: 'MaterialIcons'),
                           onPressed: () {
                             try {
                               FirebaseFirestore.instance

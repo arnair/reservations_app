@@ -24,7 +24,7 @@ class ReserveButton extends StatelessWidget {
         );
       },
       icon: Icon(
-        IconData(0xe403, fontFamily: 'MaterialIcons'),
+        const IconData(0xe403, fontFamily: 'MaterialIcons'),
         color: Colors.grey.shade800
       ),
     );
