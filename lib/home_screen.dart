@@ -65,6 +65,7 @@ class _MyHomeScreenState extends State<HomeScreen> {
         ],
       ),
       body:Container(
+        constraints: BoxConstraints(maxWidth: 600),
         child: page,
       ),
     );

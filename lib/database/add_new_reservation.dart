@@ -153,7 +153,8 @@ class _ReserveTableState extends State<ReserveTable> {
       appBar: AppBar(
         title: Text(DateFormat('d-MMM').format(widget.selectedDate)),
       ),
-      body: SingleChildScrollView(
+      body: Container(
+        constraints: BoxConstraints(maxWidth: 550),
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
