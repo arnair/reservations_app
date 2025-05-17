@@ -1,18 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:reservations_app/delete_reservations_screen.dart';
-
-import 'package:reservations_app/make_reservations_screen.dart';
+import 'package:reservations_app/features/reservations/presentation/delete_reservations_screen.dart';
+import 'package:reservations_app/features/reservations/presentation/make_reservations_screen.dart';
 import 'package:reservations_app/widgets/reserve_table_buttons.dart';
+import 'package:reservations_app/features/authentication/presentation/auth_controller.dart';
 
-import 'package:reservations_app/auth/auth_service.dart';
-import 'package:reservations_app/auth/login_screen.dart';
-
-enum Page {makeReservationsPage, deleteReservationsPage, unknownPage}
-
-void signOutUser(BuildContext context) {
-  AuthService().signout();
-  MaterialPageRoute(builder: (context) => const LoginScreen());
-}
+enum Page { makeReservationsPage, deleteReservationsPage, unknownPage }
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,6 +14,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _MyHomeScreenState extends State<HomeScreen> {
+  final _authController = AuthController();
   final selectedDateNotifier = ValueNotifier(DateTime.now());
   var selectedIndex = Page.makeReservationsPage;
   var pageTitle = 'ERROR';
@@ -32,11 +25,11 @@ class _MyHomeScreenState extends State<HomeScreen> {
 
     switch (selectedIndex) {
       case Page.makeReservationsPage:
-        page = MakeReservationsScreen();
+        page = const MakeReservationsScreen();
         pageTitle = 'New reservation';
         break;
       case Page.deleteReservationsPage:
-        page = DeleteReservationsScreen();
+        page = const DeleteReservationsScreen();
         pageTitle = 'My reservations';
         break;
       default:
@@ -48,24 +41,25 @@ class _MyHomeScreenState extends State<HomeScreen> {
         title: Text(pageTitle),
         actions: [
           CustomIconButton(
-            icon: const IconData(0xe403, 
-            fontFamily: 'MaterialIcons'),
-            onPressed:() => setState(() {selectedIndex = Page.makeReservationsPage;}),
+            icon: const IconData(0xe403, fontFamily: 'MaterialIcons'),
+            onPressed: () => setState(() {
+              selectedIndex = Page.makeReservationsPage;
+            }),
           ),
           CustomIconButton(
-            icon: const IconData(0xeeaa, 
-            fontFamily: 'MaterialIcons'),
-            onPressed:() => setState(() {selectedIndex = Page.deleteReservationsPage;}),
+            icon: const IconData(0xeeaa, fontFamily: 'MaterialIcons'),
+            onPressed: () => setState(() {
+              selectedIndex = Page.deleteReservationsPage;
+            }),
           ),
           CustomIconButton(
-            icon: const IconData(0xf199, 
-            fontFamily: 'MaterialIcons'),
-            onPressed: () => {signOutUser(context)},
+            icon: const IconData(0xf199, fontFamily: 'MaterialIcons'),
+            onPressed: () => _authController.signOutUser(context),
           ),
         ],
       ),
-      body:Container(
-        constraints: BoxConstraints(maxWidth: 600),
+      body: Container(
+        constraints: const BoxConstraints(maxWidth: 600),
         child: page,
       ),
     );

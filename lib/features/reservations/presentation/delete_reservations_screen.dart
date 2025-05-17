@@ -17,13 +17,14 @@ class DeleteReservationsScreen extends StatefulWidget {
   const DeleteReservationsScreen({super.key});
 
   @override
-  State<DeleteReservationsScreen> createState() => _DeleteReservationsScreenState();
+  State<DeleteReservationsScreen> createState() =>
+      _DeleteReservationsScreenState();
 }
 
 class _DeleteReservationsScreenState extends State<DeleteReservationsScreen> {
   final selectedDateNotifier = ValueNotifier(DateTime.now());
 
-    @override
+  @override
   Widget build(BuildContext context) {
     return Center(
       child: Column(
@@ -31,7 +32,8 @@ class _DeleteReservationsScreenState extends State<DeleteReservationsScreen> {
           StreamBuilder(
             stream: FirebaseFirestore.instance
                 .collection("reservations")
-                .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                .where('userID',
+                    isEqualTo: FirebaseAuth.instance.currentUser!.uid)
                 .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -49,9 +51,12 @@ class _DeleteReservationsScreenState extends State<DeleteReservationsScreen> {
                 itemBuilder: (context, index) {
                   String tableName = 'Test';
 
-                  Timestamp startTime = snapshot.data!.docs[index].data()['startDate'];
-                  Timestamp endtTime = snapshot.data!.docs[index].data()['endDate'];
-                  DateTime selectedDate = DateTime.fromMillisecondsSinceEpoch(startTime.millisecondsSinceEpoch);
+                  Timestamp startTime =
+                      snapshot.data!.docs[index].data()['startDate'];
+                  Timestamp endtTime =
+                      snapshot.data!.docs[index].data()['endDate'];
+                  DateTime selectedDate = DateTime.fromMillisecondsSinceEpoch(
+                      startTime.millisecondsSinceEpoch);
 
                   return Row(
                     children: [
@@ -66,25 +71,27 @@ class _DeleteReservationsScreenState extends State<DeleteReservationsScreen> {
                         ),
                       ),
                       CustomIconButton(
-                        icon: const IconData(0xeeaa, fontFamily: 'MaterialIcons'),
+                        icon:
+                            const IconData(0xeeaa, fontFamily: 'MaterialIcons'),
                         onPressed: () {
                           try {
                             FirebaseFirestore.instance
-                            .collection("reservations")
-                            .doc(snapshot.data!.docs[index].id)
-                            .delete()
-                            .then((_) {
+                                .collection("reservations")
+                                .doc(snapshot.data!.docs[index].id)
+                                .delete()
+                                .then((_) {
                               log("Reservation deleted");
-                              toastification.show(title: Text("Reservation deleted"),
+                              toastification.show(
+                                title: Text("Reservation deleted"),
                                 autoCloseDuration: const Duration(seconds: 5),
                               );
                             });
                           } on FirebaseException catch (e) {
                             log(e.message!);
-                            toastification.show(title: Text(e.message!),
-                              autoCloseDuration: const Duration(seconds: 5),
-                              type: ToastificationType.error
-                            );
+                            toastification.show(
+                                title: Text(e.message!),
+                                autoCloseDuration: const Duration(seconds: 5),
+                                type: ToastificationType.error);
                           }
                         },
                       ),

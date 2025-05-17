@@ -15,10 +15,10 @@ class AuthService {
       return cred.user;
     } on FirebaseAuthException catch (e) {
       log(e.message!);
-      toastification.show(title: Text(e.message!),
-        autoCloseDuration: const Duration(seconds: 5),
-        type: ToastificationType.error
-      );
+      toastification.show(
+          title: Text(e.message!),
+          autoCloseDuration: const Duration(seconds: 5),
+          type: ToastificationType.error);
     }
     return null;
   }
@@ -31,10 +31,10 @@ class AuthService {
       return cred.user;
     } on FirebaseAuthException catch (e) {
       log(e.message!);
-      toastification.show(title: Text(e.message!),
-        autoCloseDuration: const Duration(seconds: 5),
-        type: ToastificationType.error
-      );
+      toastification.show(
+          title: Text(e.message!),
+          autoCloseDuration: const Duration(seconds: 5),
+          type: ToastificationType.error);
     }
     return null;
   }
@@ -44,10 +44,10 @@ class AuthService {
       await _auth.signOut();
     } on FirebaseAuthException catch (e) {
       log(e.message!);
-      toastification.show(title: Text(e.message!),
-        autoCloseDuration: const Duration(seconds: 5),
-        type: ToastificationType.error
-      );
+      toastification.show(
+          title: Text(e.message!),
+          autoCloseDuration: const Duration(seconds: 5),
+          type: ToastificationType.error);
     }
   }
 }

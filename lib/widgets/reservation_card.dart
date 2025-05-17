@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
-import 'dart:ui';
 
 Text createReservationText(Timestamp startTime, Timestamp endTime) {
-
-  String formattedStart = DateFormat('kk:mm').format(DateTime.fromMillisecondsSinceEpoch(startTime.millisecondsSinceEpoch) );
-  String dormattedEnd = DateFormat('kk:mm').format(DateTime.fromMillisecondsSinceEpoch(endTime.millisecondsSinceEpoch));
+  String formattedStart = DateFormat('kk:mm').format(
+      DateTime.fromMillisecondsSinceEpoch(startTime.millisecondsSinceEpoch));
+  String dormattedEnd = DateFormat('kk:mm').format(
+      DateTime.fromMillisecondsSinceEpoch(endTime.millisecondsSinceEpoch));
   return Text('$formattedStart - $dormattedEnd');
 }
 
@@ -53,8 +53,7 @@ class ReservationCard extends StatelessWidget {
                     .doc(tableID)
                     .snapshots(),
                 builder: (context, snapshot) {
-                  if (snapshot.connectionState ==
-                      ConnectionState.waiting) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
                     return const SizedBox(
                         height: 18,
                         width: 18,
@@ -78,14 +77,19 @@ class ReservationCard extends StatelessWidget {
               const SizedBox(height: 8),
               Row(
                 children: [
-                  Icon(Icons.calendar_today,
-                      size: 16,),
+                  Icon(
+                    Icons.calendar_today,
+                    size: 16,
+                  ),
                   const SizedBox(width: 4),
                   Text(
                     DateFormat('d MMM').format(selectedDate),
                   ),
                   const SizedBox(width: 12),
-                  Icon(Icons.access_time, size: 16,),
+                  Icon(
+                    Icons.access_time,
+                    size: 16,
+                  ),
                   const SizedBox(width: 4),
                   createReservationText(reservationStart, reservationEnd),
                 ],
